@@ -5,7 +5,6 @@ Servo bizim;
 Servo rakip;
 Servo ceza;
 
-//deneme
 // HABERLEŞME
 #define sayac_bildirim A0
 #define ceza_bildirim A1
