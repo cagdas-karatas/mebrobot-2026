@@ -66,6 +66,7 @@ void setup() {
 
 void loop() {
   
+  //olcum_gozlem();
   baslangic_kod();
   //otur();
   if (baslangic_ceza_aldik_mi == true)
@@ -88,10 +89,10 @@ void loop() {
 void normal_kod()
 {
   //NORMAL KOD
-  if (digitalRead(top_sensor) == 1)
+  if (top_var_mi())
   {
     byte sonuc = olcum_yeni();
-    if (sonuc == KIRMIZI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    if (sonuc == KIRMIZI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
       //Serial.print("KIRMIZI: ");
       //Serial.println(sonuc);
@@ -113,7 +114,7 @@ void normal_kod()
       }
 
     }
-    else if (sonuc == MAVI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    else if (sonuc == MAVI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
       //Serial.print("MAVİ: ");
       //Serial.println(sonuc);
@@ -135,7 +136,7 @@ void normal_kod()
       }
 
     }
-    else if (sonuc == YESIL_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    else if (sonuc == YESIL_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
       //Serial.print("CEZA: ");
       //Serial.println(sonuc);
@@ -160,10 +161,10 @@ void baslangic_kod()
   while (1)
   {
     //NORMAL KOD
-    if (digitalRead(top_sensor) == 1)
+    if (top_var_mi())
     {
       int sonuc = olcum_yeni(); //OLCUM YAKLAŞIK 240 MİLİSANİYEDE TAMAMLANIYOR
-      if (sonuc == KIRMIZI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      if (sonuc == KIRMIZI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         //Serial.print("KIRMIZI: ");
         //Serial.println(sonuc);
@@ -180,7 +181,7 @@ void baslangic_kod()
         }
 
       }
-      else if (sonuc == MAVI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      else if (sonuc == MAVI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         //Serial.print("MAVİ: ");
         //Serial.println(sonuc);
@@ -197,7 +198,7 @@ void baslangic_kod()
         }
 
       }
-      else if (sonuc == YESIL_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      else if (sonuc == YESIL_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         //Serial.print("CEZA: ");
         //Serial.println(sonuc);
@@ -221,10 +222,10 @@ void baslangic_kod()
 void tek_tek_topla()
 {
   //TEK TEK BIRAKAN KOD
-  if (digitalRead(top_sensor) == 1)
+  if (top_var_mi())
   {
     int sonuc = olcum_yeni();  //OLCUM YAKLAŞIK 240 MİLİSANİYEDE TAMAMLANIYOR
-    if (sonuc == KIRMIZI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    if (sonuc == KIRMIZI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
       //Serial.print("KIRMIZI: ");
       //Serial.println(sonuc);
@@ -240,7 +241,7 @@ void tek_tek_topla()
       }
 
     }
-    else if (sonuc == MAVI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    else if (sonuc == MAVI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
       //Serial.print("MAVİ: ");
       //Serial.println(sonuc);
@@ -256,7 +257,7 @@ void tek_tek_topla()
       }
 
     }
-    else if (sonuc == YESIL_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    else if (sonuc == YESIL_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
       //Serial.print("CEZA: ");
       //Serial.println(sonuc);
@@ -279,10 +280,10 @@ void tek_tek_topla()
 void sadece_ayikla()
 {
     //NORMAL KOD
-    if (digitalRead(top_sensor) == 1)
+    if (top_var_mi())
     {
       int sonuc = olcum_yeni();                                            //OLCUM YAKLAŞIK 240 MİLİSANİYEDE TAMAMLANIYOR
-      if (sonuc == KIRMIZI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      if (sonuc == KIRMIZI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         //Serial.print("KIRMIZI: ");
         //Serial.println(sonuc);
@@ -297,7 +298,7 @@ void sadece_ayikla()
         }
 
       }
-      else if (sonuc == MAVI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      else if (sonuc == MAVI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
         //Serial.print("MAVİ: ");
         //Serial.println(sonuc);
@@ -312,7 +313,7 @@ void sadece_ayikla()
         }
 
       }
-      else if (sonuc == YESIL_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      else if (sonuc == YESIL_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
     {
         //Serial.print("CEZA: ");
         //Serial.println(sonuc);
@@ -335,21 +336,21 @@ void sadece_ayikla()
 void kalibre_top_okuma()
 {
     //NORMAL KOD
-    if (digitalRead(top_sensor) == 1)
+    if (top_var_mi())
     {
       int sonuc = olcum_yeni();                                            //OLCUM YAKLAŞIK 240 MİLİSANİYEDE TAMAMLANIYOR
-      if (sonuc == KIRMIZI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      if (sonuc == KIRMIZI_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         Serial.print("KIRMIZI: ");
         Serial.println(sonuc);
 
       }
-      else if (sonuc == MAVI_TOP)
+      else if (sonuc == MAVI_TOP && top_var_mi())
       {
         Serial.print("MAVİ: ");
         Serial.println(sonuc);
       }
-      else if (sonuc == YESIL_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      else if (sonuc == YESIL_TOP && top_var_mi())  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         Serial.print("CEZA: ");
         Serial.println(sonuc);
@@ -516,6 +517,11 @@ void olcum_gozlem()
     Serial.println(yesil);
   }
 
+}
+
+boolean top_var_mi()
+{
+  return (digitalRead(top_sensor) == 1);
 }
 
 void renk_sensor_test(int delayValue) {
