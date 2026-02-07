@@ -26,7 +26,7 @@ int kirmizi_veriler[4] = { 0, 0, 0, 0 };
 int mavi_veriler[4] = { 0, 0, 0, 0 };
 int yesil_veriler[4] = { 0, 0, 0, 0 };
 
-int kirmizi_alt_limit = 150, mavi_ust_limit = 90;
+int kirmizi_alt_limit = 200, mavi_ust_limit = 80;
 
 // TOPLARI TOKATLAYAN VE CEZAYI TOKATLAYAN SERVOLARIN NORMAL DURUMLARI
 // ÖZELLİKLE tokat_default TOKATLAMA KODLARINDA DA KULLANILIYOR, BURADAN DEĞİŞTİRİLMESİ ÖNEMLİ
@@ -65,12 +65,6 @@ void setup() {
 }
 
 void loop() {
-
-  //olcum_gozlem();
-  while (1)
-  {
-    kalibre_top_okuma();
-  }
   
   baslangic_kod();
   //otur();
@@ -303,8 +297,8 @@ void sadece_ayikla()
         }
 
       }
-      else if (sonuc < mavi_ust_limit && digitalRead(top_sensor) == 1) //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
-      {
+      else if (sonuc == MAVI_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    {
         //Serial.print("MAVİ: ");
         //Serial.println(sonuc);
 
@@ -318,8 +312,8 @@ void sadece_ayikla()
         }
 
       }
-      else if (sonuc > ceza_alt_limit && sonuc < ceza_ust_limit && digitalRead(top_sensor) == 1) //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
-      {
+      else if (sonuc == YESIL_TOP)  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+    {
         //Serial.print("CEZA: ");
         //Serial.println(sonuc);
 
@@ -438,24 +432,6 @@ void otur()
   while (1);
 }
 
-float olcum() {
-
-  //verileri güncelliyoruz
-  for (int i = 0; i < 4; i++) {
-    olc();
-    kirmizi_veriler[i] = kirmizi;
-    mavi_veriler[i] = mavi;
-  }
-
-  // 4 TANE VERİ ALIP İÇELERİNDEN TUTARLI HALE GETİRİYORUZ
-  // ÖRNEK : 64,65,68,97 ÖLÇMÜŞ OLALIM -> 67 GİBİ BİR SONUÇ DÖNDÜRÜYOR ANLIK DALGALANMALARDAN ETKİLENMEMİŞ OLUYORUZ
-  kirmizi = stabilSonucuBul(kirmizi_veriler, 4);
-  mavi = stabilSonucuBul(mavi_veriler, 4);
-
-  float sonuc = ((float)mavi / (float)kirmizi) * 100;
-  return sonuc;
-}
-
 byte olcum_yeni()
 {
   byte olcum_sayac = 0;
@@ -473,13 +449,13 @@ byte olcum_yeni()
 
       float sonuc_m_k = ((float)mavi / (float)kirmizi) * 100;
       float sonuc_m_y = ((float)mavi / (float)yesil) * 100;
-      float sonuc_k_y = ((float)kirmizi / (float)yesil) * 100;
+      float sonuc_y_k = ((float)yesil / (float)kirmizi) * 100;
 
       if (sonuc_m_k < mavi_ust_limit && sonuc_m_y < mavi_ust_limit)
       {
         return MAVI_TOP;
       }
-      else if (sonuc_m_k > kirmizi_alt_limit && sonuc_k_y < 60)
+      else if (sonuc_m_k > kirmizi_alt_limit && sonuc_y_k > kirmizi_alt_limit)
       {
         return KIRMIZI_TOP;
       }

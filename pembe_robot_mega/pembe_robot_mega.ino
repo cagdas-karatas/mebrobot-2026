@@ -33,17 +33,19 @@ Servo ceza;
 
 #define LED_PIN 42
 #define LED_COUNT  8      // LED sayısı
-#define KIRMIZI 1
-#define MAVI 0
+#define MAVI 1
+#define KIRMIZI 2
+#define YESIL 3
 #define BIZIM_TOPU_BIRAK 1
-#define CEZA_BIRAK 0
+#define YESIL_BIRAK 0
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-float kirmizi = 0, mavi = 0;
+float kirmizi = 0, mavi = 0, yesil = 0;
 int kirmizi_veriler[4] = { 0, 0, 0, 0 };
 int mavi_veriler[4] = { 0, 0, 0, 0 };
-int mavi_ust_limit = 70, kirmizi_alt_limit = 230;
+int yesil_veriler[4] = { 0, 0, 0, 0 };
+int mavi_ust_limit = 70, yesil_ust_limit = 60, kirmizi_alt_limit = 300;
 byte bolge = 0, duvarla_isim_var = 0;
 
 byte bizim_kapak_default = 20, ceza_kapak_default = 0;
@@ -133,7 +135,7 @@ void loop() {
     duvarla_isim_var = 1;
     while(duvarla_isim_var == 1)
     {
-      duvar_takip(CEZA_BIRAK);
+      duvar_takip(YESIL_BIRAK);
     }
     digitalWrite(kilit_sinyal, LOW);
     delay(2000);
@@ -181,16 +183,11 @@ void duvar_takip(byte nereye)
   if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 0)
   {
     dur(200);
-    int sonuc = olcum();
-
-    /* AŞAĞIDAKİ IF KOŞULUNUN TÜRKÇE MEALİ :)
-     * MAVİ BÖLGE OKUDUK: KIRMIZI KÖŞEYİZ(bolge = KIRMIZI = 1) ve CEZA BIRAKACAĞIZ(nereye = CEZA_BIRAK = 0) --> bolge(1) != nereye(0)
-     * MAVİ BÖLGE OKUDUK: MAVİ KÖŞEYİZ(bolge = MAVI = 0) ve BİZİM TOPU BIRAKACAĞIZ(nereye = BIZIM_TOPU_BIRAK = 1) --> bolge(0) != nereye(1)
-     * KIRMIZI BÖLGE OKUDUK: KIRMIZI KÖŞEYİZ(bolge = KIRMIZI = 1) ve BİZİM TOPU BIRAKACAĞIZ(nereye = BIZIM_TOPU_BIRAK = 1) --> bolge(1) == nereye(1)
-     * KIRMIZI BÖLGE OKUDUK: MAVİ KÖŞEYİZ(bolge = MAVI = 0) ve CEZA BIRAKACAĞIZ(nereye = CEZA_BIRAK = 0) --> bolge(0) == nereye(0)
-     * GERİ KALAN HİÇBİR KOŞULDA IF'İN İÇİNE GİRİLİP PARK YAPILMAZ DUVAR TAKİBE DEVAM EDİLİR <3
-     */
-    if ( (sonuc < mavi_ust_limit && bolge != nereye) || (sonuc > kirmizi_alt_limit && bolge == nereye) )
+    byte sonuc = olcum();
+    
+    if ( (sonuc == MAVI && nereye == BIZIM_TOPU_BIRAK && bolge == MAVI) || 
+         (sonuc == KIRMIZI && nereye == BIZIM_TOPU_BIRAK && bolge == KIRMIZI) ||
+         (sonuc == YESIL && nereye == YESIL_BIRAK) )
     {
       dur(200);
       park(nereye);
@@ -381,21 +378,36 @@ void basla()
 }
 
 
-float olcum() {
+byte olcum() {
   //verileri güncelliyoruz
   for (int i = 0; i < 4; i++) {
     olc();
     kirmizi_veriler[i] = kirmizi;
     mavi_veriler[i] = mavi;
+    yesil_veriler[i] = yesil;
   }
 
   // 6 TANE VERİ ALIP İÇELERİNDEN TUTARLI HALE GETİRİYORUZ
   // ÖRNEK : 64,65,68,97 ÖLÇMÜŞ OLALIM -> 67 GİBİ BİR SONUÇ DÖNDÜRÜYOR ANLIK DALGALANMALARDAN ETKİLENMEMİŞ OLUYORUZ
   kirmizi = stabilSonucuBul(kirmizi_veriler, 4);
   mavi = stabilSonucuBul(mavi_veriler, 4);
+  yesil = stabilSonucuBul(yesil_veriler, 4);
 
-  float sonuc = ((float)mavi / (float)kirmizi) * 100;
-  return sonuc;
+  float m_k_sonuc = ((float)mavi / (float)kirmizi) * 100;
+  float m_y_sonuc = ((float)mavi / (float)yesil) * 100;
+  float y_k_sonuc = ((float)yesil / (float)kirmizi) * 100;
+
+  if (m_k_sonuc < mavi_ust_limit && m_y_sonuc < mavi_ust_limit) {
+    return MAVI;
+  }
+  else if (m_k_sonuc > kirmizi_alt_limit && y_k_sonuc < kirmizi_alt_limit) {
+    return KIRMIZI;
+  }
+  else if (y_k_sonuc < yesil_ust_limit) {
+    return YESIL;
+  }
+
+  return 0;
 }
 
 void olc() {
@@ -410,6 +422,22 @@ void olc() {
   digitalWrite(s3, HIGH);
   delay(10);
   mavi = pulseIn(out, LOW);
+
+  //RENK SENSÖRÜ YESİL FİLTRE AYARI
+  digitalWrite(s2, HIGH);
+  digitalWrite(s3, HIGH);
+  delay(10);
+  yesil = pulseIn(out, LOW);
+  /*
+  Serial.print("MAVI: ");
+  Serial.print(mavi);
+
+  Serial.print(" KIRMIZI: ");
+  Serial.print(kirmizi);
+
+  Serial.print(" YESIL: ");
+  Serial.println(yesil);
+  */
 }
 
 
