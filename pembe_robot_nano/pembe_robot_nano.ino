@@ -26,7 +26,7 @@ int kirmizi_veriler[4] = { 0, 0, 0, 0 };
 int mavi_veriler[4] = { 0, 0, 0, 0 };
 int yesil_veriler[4] = { 0, 0, 0, 0 };
 
-int kirmizi_alt_limit = 200, mavi_ust_limit = 80;
+int kirmizi_alt_limit = 200, mavi_ust_limit = 80, yesil_ust_limit = 70;
 
 // TOPLARI TOKATLAYAN VE CEZAYI TOKATLAYAN SERVOLARIN NORMAL DURUMLARI
 // ÖZELLİKLE tokat_default TOKATLAMA KODLARINDA DA KULLANILIYOR, BURADAN DEĞİŞTİRİLMESİ ÖNEMLİ
@@ -35,6 +35,8 @@ byte sayac = 0;
 byte sayac_ust_limit = 3;
 
 void setup() {
+
+
 
   tokat.attach(10);
   ceza_tokat.attach(11);
@@ -65,7 +67,6 @@ void setup() {
 }
 
 void loop() {
-  
   //olcum_gozlem();
   baslangic_kod();
   //otur();
@@ -83,6 +84,7 @@ void loop() {
   {
     tek_tek_topla();
   }
+  
 
 }
 
@@ -451,6 +453,14 @@ byte olcum_yeni()
       float sonuc_m_k = ((float)mavi / (float)kirmizi) * 100;
       float sonuc_m_y = ((float)mavi / (float)yesil) * 100;
       float sonuc_y_k = ((float)yesil / (float)kirmizi) * 100;
+      /*
+      Serial.print("m k: ");
+      Serial.print(sonuc_m_k);
+      Serial.print(" m y: ");
+      Serial.print(sonuc_m_y);
+      Serial.print(" y k: ");
+      Serial.println(sonuc_y_k);
+      */
 
       if (sonuc_m_k < mavi_ust_limit && sonuc_m_y < mavi_ust_limit)
       {
@@ -460,7 +470,7 @@ byte olcum_yeni()
       {
         return KIRMIZI_TOP;
       }
-      else
+      else if (sonuc_y_k < yesil_ust_limit)
       {
         return YESIL_TOP;
       }
@@ -522,15 +532,6 @@ void olcum_gozlem()
 boolean top_var_mi()
 {
   return (digitalRead(top_sensor) == 1);
-}
-
-void renk_sensor_test(int delayValue) {
-  olc();
-  Serial.print("KIRMIZI: ");
-  Serial.print(kirmizi);
-  Serial.print(" MAVİ: ");
-  Serial.println(mavi);
-  delay(delayValue);
 }
 
 // ******************************Ortalama hesaplayan fonksiyon*****************************

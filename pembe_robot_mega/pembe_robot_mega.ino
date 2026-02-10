@@ -96,12 +96,21 @@ void setup() {
 
   //NEOPİXEL
   pinMode(A14, INPUT);
-  bolge = digitalRead(A14);
+  int bolge_switch_value = digitalRead(A14);
   strip.begin();
   strip.show();
 
+  if(bolge_switch_value == 1)
+  {
+    bolge = KIRMIZI;
+  }
+  else
+  {
+    bolge = MAVI;
+  }
+
   for (int i = 0; i < LED_COUNT; i++) {
-    if (bolge == KIRMIZI)
+    if (bolge == KIRMIZI) // bolge == 1 ise KIRMIZI
     {
       strip.setPixelColor(i, strip.Color(255, 0, 0)); // kırmızı
     }
@@ -114,10 +123,11 @@ void setup() {
 
   Serial.begin(9600);
   while(digitalRead(sag_goz) == 0);
-  basla();
+  //basla();
 }
 
 void loop() {
+  
   if (digitalRead(sayac_bildirim) == 1)
   {
     digitalWrite(kilit_sinyal, HIGH);
@@ -396,11 +406,16 @@ byte olcum() {
   float m_k_sonuc = ((float)mavi / (float)kirmizi) * 100;
   float m_y_sonuc = ((float)mavi / (float)yesil) * 100;
   float y_k_sonuc = ((float)yesil / (float)kirmizi) * 100;
-
+  Serial.print("m k: ");
+  Serial.print(m_k_sonuc);
+  Serial.print(" m y: ");
+  Serial.print(m_y_sonuc);
+  Serial.print(" y k: ");
+  Serial.println(y_k_sonuc);
   if (m_k_sonuc < mavi_ust_limit && m_y_sonuc < mavi_ust_limit) {
     return MAVI;
   }
-  else if (m_k_sonuc > kirmizi_alt_limit && y_k_sonuc < kirmizi_alt_limit) {
+  else if (m_k_sonuc > kirmizi_alt_limit && y_k_sonuc > kirmizi_alt_limit) {
     return KIRMIZI;
   }
   else if (y_k_sonuc < yesil_ust_limit) {
