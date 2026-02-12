@@ -297,7 +297,7 @@ void park (byte nereye)
   sol(100);
   delay(100);
   dur(200);
-  if (nereye == 1)
+  if (nereye == BIZIM_TOPU_BIRAK)
   {
     bizim.write(bizim_kapak_default + 90);
     delay(150);

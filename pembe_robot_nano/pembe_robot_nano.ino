@@ -73,7 +73,7 @@ void loop() {
     ceza_birak();
   }
   unsigned long firstMillis = millis();
-  while ((millis() - firstMillis) < 90000) {
+  while ((millis() - firstMillis) < 45000) {
     normal_kod();
   }
   bizim_topu_birak();
@@ -154,7 +154,8 @@ void baslangic_kod() {
           rakip_al();
         }
 
-      } else if (sonuc == MAVI_TOP && digitalRead(top_sensor))  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      } 
+      else if (sonuc == MAVI_TOP && digitalRead(top_sensor))  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         //Serial.print("MAVİ: ");
         //Serial.println(sonuc);
@@ -167,7 +168,8 @@ void baslangic_kod() {
           rakip_al();
         }
 
-      } else if (sonuc == YESIL_TOP && digitalRead(top_sensor))  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
+      } 
+      else if (sonuc == YESIL_TOP && digitalRead(top_sensor))  //TOKATLAYACAKSAK, OLCUM SIRASINDA TOPUN AĞIZDAN ÇIKMADIĞINI TEYİT ETMELİYİZ
       {
         //Serial.print("CEZA: ");
         //Serial.println(sonuc);
