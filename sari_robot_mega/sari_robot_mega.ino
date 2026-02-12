@@ -1,4 +1,4 @@
-#include<Servo.h>
+#include <Servo.h>
 #include <Adafruit_NeoPixel.h>
 
 Servo bizim;
@@ -11,7 +11,6 @@ Servo ceza;
 #define kilit_sinyal A2
 #define ceza_tokatla_sinyal A3
 #define otur_bildirim A4
-#define ceza_tokatlandi_bildirim A5
 
 // Sağ motor pinleri
 #define EN_R 2
@@ -33,7 +32,7 @@ Servo ceza;
 #define out 44
 
 #define LED_PIN 42
-#define LED_COUNT  8      // LED sayısı
+#define LED_COUNT 8  // LED sayısı
 #define MAVI 1
 #define KIRMIZI 2
 #define YESIL 3
@@ -46,10 +45,12 @@ float kirmizi = 0, mavi = 0, yesil = 0;
 int kirmizi_veriler[4] = { 0, 0, 0, 0 };
 int mavi_veriler[4] = { 0, 0, 0, 0 };
 int yesil_veriler[4] = { 0, 0, 0, 0 };
+
 int mavi_ust_limit = 70, yesil_ust_limit = 60, kirmizi_alt_limit = 300;
+
 byte bolge = 0, duvarla_isim_var = 0;
 
-byte bizim_kapak_default = 20, ceza_kapak_default = 0;
+byte bizim_kapak_default = 25, ceza_kapak_default = 0;
 
 void setup() {
   // SERVO TANIMLARI
@@ -85,7 +86,6 @@ void setup() {
   pinMode(sayac_bildirim, INPUT);
   pinMode(ceza_bildirim, INPUT);
   pinMode(otur_bildirim, INPUT);
-  pinMode(ceza_tokatlandi_bildirim, INPUT);
   pinMode(kilit_sinyal, OUTPUT);
   pinMode(ceza_tokatla_sinyal, OUTPUT);
 
@@ -102,68 +102,54 @@ void setup() {
   strip.begin();
   strip.show();
 
-  if(bolge_switch_value == 1)
-  {
+  if (bolge_switch_value == 1) {
     bolge = KIRMIZI;
-  }
-  else
-  {
+  } else {
     bolge = MAVI;
   }
 
   for (int i = 0; i < LED_COUNT; i++) {
-    if (bolge == KIRMIZI) // bolge == 1 ise KIRMIZI
-    {
-      strip.setPixelColor(i, strip.Color(255, 0, 0)); // kırmızı
-    }
-    else
-    {
-      strip.setPixelColor(i, strip.Color(0, 0, 255)); // mavi
+    if (bolge == KIRMIZI) {
+      strip.setPixelColor(i, strip.Color(255, 0, 0));  // kırmızı
+    } else {
+      strip.setPixelColor(i, strip.Color(0, 0, 255));  // mavi
     }
   }
   strip.show();
 
   Serial.begin(9600);
-  while(digitalRead(sag_goz) == 0);
+
+  while (digitalRead(sag_goz) == 0)
+    ;
   //basla();
 }
 
 void loop() {
-  
-  if (digitalRead(sayac_bildirim) == 1)
-  {
+
+  if (digitalRead(sayac_bildirim) == 1) {
     digitalWrite(kilit_sinyal, HIGH);
     duvarla_isim_var = 1;
-    while(duvarla_isim_var == 1)
-    {
+    while (duvarla_isim_var == 1) {
       duvar_takip(BIZIM_TOPU_BIRAK);
     }
     digitalWrite(kilit_sinyal, LOW);
     delay(2000);
-  }
-  else if (digitalRead(ceza_bildirim) == 1)
-  {
+  } else if (digitalRead(ceza_bildirim) == 1) {
     digitalWrite(kilit_sinyal, HIGH);
     duvarla_isim_var = 1;
-    while(duvarla_isim_var == 1)
-    {
+    while (duvarla_isim_var == 1) {
       duvar_takip(YESIL_BIRAK);
     }
     digitalWrite(kilit_sinyal, LOW);
     delay(2000);
-  }
-  else if(digitalRead(otur_bildirim) == 1)
-  {
+  } else if (digitalRead(otur_bildirim) == 1) {
     duvar_takip_otur();
-  }
-  else
-  {
+  } else {
     rastgele();
   }
 }
 
-void goz_okuma()
-{
+void goz_okuma() {
   Serial.print("Sol göz: ");
   Serial.println(digitalRead(sol_goz));
   Serial.print("Saü göz: ");
@@ -177,12 +163,12 @@ void rastgele()
   if (digitalRead(sol_goz) == 0)
   {
     sag(80);
-    delay(700);
+    delay(600);
   }
   else if (digitalRead(sag_goz) == 0)
   {
     sag(80);
-    delay(900);
+    delay(800);
   }
   else
   {
@@ -190,13 +176,11 @@ void rastgele()
   }
 }
 
-void duvar_takip(byte nereye)
-{
-  if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 0)
-  {
+void duvar_takip(byte nereye) {
+  if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 0) {
     dur(200);
-    byte sonuc = olcum();
-    
+    int sonuc = olcum();
+
     if ( (sonuc == MAVI && nereye == BIZIM_TOPU_BIRAK && bolge == MAVI) || 
          (sonuc == KIRMIZI && nereye == BIZIM_TOPU_BIRAK && bolge == KIRMIZI) ||
          (sonuc == YESIL && nereye == YESIL_BIRAK) )
@@ -204,19 +188,18 @@ void duvar_takip(byte nereye)
       dur(200);
       park(nereye);
     }
-    while (digitalRead(sag_goz) == 0)
-    {
+    while (digitalRead(sag_goz) == 0) {
       sol(100);
     }
-    
+
     dur(200);
-  }
-  else if(digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 1)
+  } 
+  else if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 1) 
   {
     unsigned long firstMillis = millis();
-    while (digitalRead(sag_goz) == 1)
+    while (digitalRead(sag_goz) == 1) 
     {
-      if( (millis() - firstMillis) > 3000)
+      if ((millis() - firstMillis) > 3000) 
       {
         ileri(100);
         delay(300);
@@ -224,27 +207,23 @@ void duvar_takip(byte nereye)
       }
       sol(100);
     }
-  }
-  else
-  {
-    if (digitalRead(sag_goz) == 1) //SAĞA YANAŞ
+  } else {
+    if (digitalRead(sag_goz) == 1)  //SAĞA YANAŞ
     {
       ileri(150, 100);
-    }
-    else
-    {
+    } else {
       ileri(100, 150);
     }
   }
 }
 
-void duvar_takip_otur()
+void duvar_takip_otur() 
 {
-  if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 0)
+  if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 0) 
   {
-    dur(200);
+    dur(240);
     int sonuc = olcum();
-    
+
     if ( (sonuc == MAVI && bolge == KIRMIZI) || (sonuc == KIRMIZI && bolge == MAVI) )
     {
       ileri(100);
@@ -252,36 +231,30 @@ void duvar_takip_otur()
       dur(0);
       while(1); // OTURDUK BEKLİYORUZ
     }
-    
+
     while (digitalRead(sag_goz) == 0)
     {
       sol(100);
     }
-    
+
     dur(200);
-  }
-  else if(digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 1)
+  } 
+  else if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 1)
   {
     unsigned long firstMillis = millis();
-    while (digitalRead(sag_goz) == 1)
-    {
-      if( (millis() - firstMillis) > 3000)
-      {
+    while (digitalRead(sag_goz) == 1) {
+      if ((millis() - firstMillis) > 3000) {
         ileri(100);
         delay(300);
         break;
       }
       sol(100);
     }
-  }
-  else
-  {
-    if (digitalRead(sag_goz) == 1) //SAĞA YANAŞ
+  } else {
+    if (digitalRead(sag_goz) == 1)  //SAĞA YANAŞ
     {
       ileri(150, 100);
-    }
-    else
-    {
+    } else {
       ileri(100, 150);
     }
   }
@@ -297,7 +270,7 @@ void park (byte nereye)
   sol(100);
   delay(100);
   dur(200);
-  if (nereye == BIZIM_TOPU_BIRAK)
+  if (nereye == 1)
   {
     bizim.write(bizim_kapak_default + 90);
     delay(150);
@@ -305,12 +278,12 @@ void park (byte nereye)
   else
   {
     sol(100);
-    delay(400);
+    delay(300);
     dur(200);
     ceza.write(ceza_kapak_default + 120);
     delay(100);
     digitalWrite(ceza_tokatla_sinyal, HIGH);
-    while(digitalRead(ceza_tokatlandi_bildirim) == 0); //NANO'dan haber bekle
+    delay(500);
     digitalWrite(ceza_tokatla_sinyal, LOW);
   }
   ileri(100);
@@ -327,66 +300,59 @@ void park (byte nereye)
   duvarla_isim_var = 0;
 }
 
-void ileri(byte hiz)
-{
+void ileri(byte hiz) {
   analogWrite(RPWM_R, hiz);
   analogWrite(LPWM_R, 0);
   analogWrite(RPWM_L, 0);
   analogWrite(LPWM_L, hiz);
 }
 
-void ileri(byte sol_hiz, byte sag_hiz)
-{
+void ileri(byte sol_hiz, byte sag_hiz) {
   analogWrite(RPWM_R, sag_hiz);
   analogWrite(LPWM_R, 0);
   analogWrite(RPWM_L, 0);
   analogWrite(LPWM_L, sol_hiz);
 }
 
-void geri(byte hiz)
-{
+void geri(byte hiz) {
   analogWrite(RPWM_R, 0);
   analogWrite(LPWM_R, hiz);
   analogWrite(RPWM_L, hiz);
   analogWrite(LPWM_L, 0);
 }
 
-void sol(byte hiz)
-{
+void sol(byte hiz) {
   analogWrite(RPWM_R, hiz);
   analogWrite(LPWM_R, 0);
   analogWrite(RPWM_L, hiz);
   analogWrite(LPWM_L, 0);
 }
 
-void sag(byte hiz)
-{
+void sag(byte hiz) {
   analogWrite(RPWM_R, 0);
   analogWrite(LPWM_R, hiz);
   analogWrite(RPWM_L, 0);
   analogWrite(LPWM_L, hiz);
 }
 
-void dur(byte guc)
-{
+void dur(byte guc) {
   analogWrite(RPWM_R, guc);
   analogWrite(LPWM_R, guc);
   analogWrite(RPWM_L, guc);
   analogWrite(LPWM_L, guc);
 }
 
-void basla()
-{
+void basla() {
   // İLERİ GİT (her iki motor ileri yönde döner)
-  ileri(255); // ileri(byte hız)
+  ileri(250);  // ileri(byte hız)
 
-  delay(800);  // 1 saniye ileri git
+  delay(500);  // 1 saniye ileri git
 
   // DUR
-  dur(100); //dur(byte guc) -> guc ne kadar yüksekse o kadar sert fren yapar.
+  dur(100);  //dur(byte guc) -> guc ne kadar yüksekse o kadar sert fren yapar.
 
   //durduğunu anla
-  delay(1000);
+  delay(150);
 }
 
 
@@ -458,8 +424,6 @@ void olc() {
   Serial.println(yesil);
   */
 }
-
-
 
 
 
