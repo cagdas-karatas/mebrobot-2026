@@ -11,6 +11,7 @@ Servo ceza;
 #define kilit_sinyal A2
 #define ceza_tokatla_sinyal A3
 #define otur_bildirim A4
+#define ceza_tokatlandi_bildirim A5
 
 // Sağ motor pinleri
 #define EN_R 2
@@ -86,6 +87,7 @@ void setup() {
   pinMode(sayac_bildirim, INPUT);
   pinMode(ceza_bildirim, INPUT);
   pinMode(otur_bildirim, INPUT);
+  pinMode(ceza_tokatlandi_bildirim, INPUT);
   pinMode(kilit_sinyal, OUTPUT);
   pinMode(ceza_tokatla_sinyal, OUTPUT);
 
@@ -119,8 +121,7 @@ void setup() {
 
   Serial.begin(9600);
 
-  while (digitalRead(sag_goz) == 0)
-    ;
+  while (digitalRead(sag_goz) == 0);
   //basla();
 }
 
@@ -221,7 +222,7 @@ void duvar_takip_otur()
 {
   if (digitalRead(sol_goz) == 0 && digitalRead(sag_goz) == 0) 
   {
-    dur(240);
+    dur(200);
     int sonuc = olcum();
 
     if ( (sonuc == MAVI && bolge == KIRMIZI) || (sonuc == KIRMIZI && bolge == MAVI) )
@@ -283,7 +284,7 @@ void park (byte nereye)
     ceza.write(ceza_kapak_default + 120);
     delay(100);
     digitalWrite(ceza_tokatla_sinyal, HIGH);
-    delay(500);
+    while(digitalRead(ceza_tokatlandi_bildirim) == 0); //NANO'dan haber bekle
     digitalWrite(ceza_tokatla_sinyal, LOW);
   }
   ileri(100);
@@ -413,16 +414,6 @@ void olc() {
   digitalWrite(s3, HIGH);
   delay(10);
   yesil = pulseIn(out, LOW);
-  /*
-  Serial.print("MAVI: ");
-  Serial.print(mavi);
-
-  Serial.print(" KIRMIZI: ");
-  Serial.print(kirmizi);
-
-  Serial.print(" YESIL: ");
-  Serial.println(yesil);
-  */
 }
 
 

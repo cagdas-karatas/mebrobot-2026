@@ -447,16 +447,6 @@ void olc() {
   digitalWrite(s3, HIGH);
   delay(10);
   yesil = pulseIn(out, LOW);
-  /*
-  Serial.print("MAVI: ");
-  Serial.print(mavi);
-
-  Serial.print(" KIRMIZI: ");
-  Serial.print(kirmizi);
-
-  Serial.print(" YESIL: ");
-  Serial.println(yesil);
-  */
 }
 
 
